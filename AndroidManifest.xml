@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="net.leetcode.robattery" android:versionCode="1"
 	android:versionName="1.0">
-	<application android:label="@string/app_name" android:enabled="true" android:icon="@drawable/robot">
+
+	<application android:label="@string/app_name"
+		android:enabled="true" android:icon="@drawable/robot">
+
 		<activity android:name=".Robattery" android:label="@string/app_name"
 			android:multiprocess="false" android:stateNotNeeded="true"
 			android:screenOrientation="unspecified" android:finishOnTaskLaunch="true"
@@ -11,20 +14,25 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-            
-</intent-filter>
+
+			</intent-filter>
 		</activity>
-		<receiver android:name=".RobatteryBootReceiver" android:enabled="true">
+
+		<receiver android:name=".RobatteryBootReceiver"
+			android:enabled="true">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"></action>
 				<category android:name="android.intent.category.LAUNCHER"></category>
 			</intent-filter>
 		</receiver>
-	<service android:enabled="true" android:name=".RobatteryService" android:exported="false">
-</service>
-</application>
-	<uses-sdk android:minSdkVersion="3" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
-<uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+		<service android:enabled="true" android:name=".RobatteryService"
+			android:exported="false">
+		</service>
+	</application>
+
+	<uses-sdk android:minSdkVersion="3" />
+
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+	<uses-permission android:name="android.permission.VIBRATE"></uses-permission>
 </manifest> 

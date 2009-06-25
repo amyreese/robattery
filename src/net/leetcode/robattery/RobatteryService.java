@@ -30,32 +30,50 @@ import android.provider.MediaStore.Audio;
 import android.util.Log;
 
 public class RobatteryService extends Service {
-	private static final int IDLETIME = 1000 * 60 * 5; // five minutes
 	private final String LOGCAT = "RobatteryService";
 	
-	private boolean registered = false;
-	private int batteryLevel = -1;
+	/**
+	 * How long the service should wait between checks and/or notifications.
+	 */
+	private static final int IDLETIME = 1000 * 60 * 5; // five minutes
 	
+	private boolean registered = false;
+	
+	/**
+	 * The latest battery status representation.
+	 */
+	private RobatteryStatus status = null;
+	
+	/**
+	 * Receiver for asynchronous battery change messages from the OS.
+	 */
 	private IntentFilter batteryIntentFilter = new IntentFilter( Intent.ACTION_BATTERY_CHANGED );
 	private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive( Context c, Intent intent ) {
 			Log.d(LOGCAT,"onReceive");
-			batteryLevel = intent.getIntExtra( "level", 0 );
+			
+			status = new RobatteryStatus(intent);
 		}
 	};
 	
+	/**
+	 * Timeout-based update method for sending notifications when the battery is low.
+	 */
 	private Handler idler = new Handler() {
 		@Override
 		public void handleMessage(Message m) {
 			this.sendEmptyMessageDelayed(0, RobatteryService.IDLETIME);
 			
-			if ( batteryLevel <= 20 ) {
+			if ( status.level <= 20 ) {
 				sendNotification();
 			}
 		}
 	};
 	
+	/**
+	 * Handle service bindings from connecting tasks.
+	 */
     @Override
 	public IBinder onBind(Intent intent) {
     	Log.d(LOGCAT,"onBind");
@@ -66,12 +84,18 @@ public class RobatteryService extends Service {
 	}
 
     
+    /**
+     * Service has been created.
+     */
     @Override
     public void onCreate() {
     	super.onCreate();
     	Log.d(LOGCAT,"onCreate");
     }
     
+    /**
+     * Service is ready to begin.  Set the tick timeout and register event listeners.
+     */
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -81,6 +105,9 @@ public class RobatteryService extends Service {
 		this.register();
 	}
 	
+	/**
+	 * Service is to be stopped and/or cleaned up.  Unregister event listeners. 
+	 */
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -90,8 +117,12 @@ public class RobatteryService extends Service {
     	this.idler.removeMessages(0);
 	}
 	
+	public RobatteryStatus getStatus() {
+		return status;
+	}
+	
 	public int getLevel() {
-		return batteryLevel;
+		return status.level;
 	}
 		
 	private void register() {
@@ -111,7 +142,7 @@ public class RobatteryService extends Service {
 	private void sendNotification() {
 		Context context = getApplicationContext();
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, Robattery.class), 0);
-		String title = "Battery Status: " + String.valueOf(batteryLevel) + "%";
+		String title = "Battery Status: " + String.valueOf(status.level) + "%";
 		
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.robot, title, System.currentTimeMillis());

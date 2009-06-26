@@ -16,6 +16,7 @@ package net.leetcode.robattery;
 
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.os.Bundle;
 
 /**
  * Class for transmitting the current status of the battery.
@@ -37,6 +38,46 @@ public class RobatteryStatus {
 		health = intent.getIntExtra("health", health);
 		temperature = intent.getIntExtra("temperature", temperature);
 		voltage = intent.getIntExtra("voltage", voltage);
+	}
+	
+	/**
+	 * Build a status object from a Bundle object.
+	 * @param bundle Bundle containing status data
+	 */
+	public RobatteryStatus(Bundle bundle) {
+		present = bundle.getBoolean("present", present);
+		status = bundle.getInt("status", status);
+		plugtype = bundle.getInt("plugtype", plugtype);
+		level = bundle.getInt("level", level);
+		scale = bundle.getInt("scale", scale);
+		health = bundle.getInt("health", health);
+		temperature = bundle.getInt("temperature", temperature);
+		voltage = bundle.getInt("voltage", voltage);
+	}
+	
+	/**
+	 * Create a Bundle object from the battery status.
+	 * @return New Bundle object containing status data
+	 */
+	public Bundle bundle() {
+		Bundle b = new Bundle();
+		addToBundle(b);
+		return b;
+	}
+	
+	/**
+	 * Inject object properties into an existing Bundle object
+	 * @param b Existing Bundle object
+	 */
+	public void addToBundle(Bundle b) {
+		b.putBoolean("present", present);
+		b.putInt("status", status);
+		b.putInt("plugtype", plugtype);
+		b.putInt("level", level);
+		b.putInt("scale", scale);
+		b.putInt("health", health);
+		b.putInt("temperature", temperature);
+		b.putInt("voltage", voltage);
 	}
 	
 	public boolean present = false;

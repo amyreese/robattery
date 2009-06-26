@@ -46,17 +46,21 @@ public class Robattery extends Activity {
 						Parcel data = Parcel.obtain();
 						Parcel reply = Parcel.obtain();
 						
-						int batteryLevel = -1;
+						RobatteryStatus battery = null;
 						
 						try {
 							robatteryBinder.transact(0, data, reply, 0);
-							batteryLevel = reply.readInt();
+							battery = new RobatteryStatus(reply.readBundle());
 							
 						} catch (RemoteException e) {
 						}
 						
-						if ( batteryLevel >= 0 ) {
-							batteryTextView.setText("Battery Level: "+String.valueOf(batteryLevel)+"%");
+						if ( battery != null ) {
+							batteryTextView.setText(
+									"Battery Level: "+String.valueOf(battery.level)+"%\n"+
+									"Status: "+String.valueOf(battery.status)+"\n"+
+									"Temperature: "+String.valueOf(battery.temperature)+"\n"
+									);
 						}
 					} else {
 						batteryTextView.setText("Binder not available.");

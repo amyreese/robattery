@@ -31,7 +31,7 @@ public class RobatteryBinder extends Binder {
 	public boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
 		Log.d(LOGCAT,"onTransact");
 		
-		reply.writeInt(service.getLevel());
+		reply.writeBundle(service.getStatus().bundle());
 		
 		return true;
 	}

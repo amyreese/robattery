@@ -20,9 +20,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -30,19 +32,25 @@ import android.provider.MediaStore.Audio;
 import android.util.Log;
 
 public class RobatteryService extends Service {
-	private final String LOGCAT = "RobatteryService";
+	private static final String LOGCAT = "RobatteryService";
+	
+	/**
+	 * How long the service should wait between checks and/or notifications.
+	 */
+	private static final int PREPTIME = 1000 * 10; // ten seconds
 	
 	/**
 	 * How long the service should wait between checks and/or notifications.
 	 */
 	private static final int IDLETIME = 1000 * 60 * 5; // five minutes
 	
+	private boolean started = false;
 	private boolean registered = false;
 	
 	/**
 	 * The latest battery status representation.
 	 */
-	private RobatteryStatus status = null;
+	private RobatteryStatus battery = null;
 	
 	/**
 	 * Receiver for asynchronous battery change messages from the OS.
@@ -53,20 +61,47 @@ public class RobatteryService extends Service {
 		public void onReceive( Context c, Intent intent ) {
 			Log.d(LOGCAT,"onReceive");
 			
-			status = new RobatteryStatus(intent);
+			battery = new RobatteryStatus(intent);
+		}
+	};
+	
+	/**
+	 * Handler for restarting the service in case of a crash.
+	 */
+	private Handler starter = new Handler() {
+		@Override
+		public void handleMessage(Message m) {
+			Log.d(LOGCAT, "starter");
+			
+			if ( !started ) {
+				Log.i(LOGCAT, "Manually starting RobatteryService.");
+				
+				Intent robatteryServiceIntent = new Intent();
+				robatteryServiceIntent.setComponent(new ComponentName(getApplicationContext(), "net.leetcode.robattery.RobatteryService"));
+				
+				startService(robatteryServiceIntent);
+			}
 		}
 	};
 	
 	/**
 	 * Timeout-based update method for sending notifications when the battery is low.
 	 */
-	private Handler idler = new Handler() {
+	private Handler notifier = new Handler() {
 		@Override
 		public void handleMessage(Message m) {
-			this.sendEmptyMessageDelayed(0, RobatteryService.IDLETIME);
+			// null means the status hasn't yet been propagated from the system event
+			if ( battery == null ) {
+				this.sendEmptyMessageDelayed(0, PREPTIME);
+				
+			} else {
+				this.sendEmptyMessageDelayed(0, IDLETIME);
 			
-			if ( status.level <= 20 ) {
-				sendNotification();
+				if ( battery.level <= 25 && (
+						battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING ||
+						battery.status == BatteryManager.BATTERY_STATUS_NOT_CHARGING ) ) {
+					sendNotification();
+				}
 			}
 		}
 	};
@@ -78,7 +113,7 @@ public class RobatteryService extends Service {
 	public IBinder onBind(Intent intent) {
     	Log.d(LOGCAT,"onBind");
     	
-		this.register();
+		register();
 		
 		return new RobatteryBinder(this);
 	}
@@ -91,6 +126,8 @@ public class RobatteryService extends Service {
     public void onCreate() {
     	super.onCreate();
     	Log.d(LOGCAT,"onCreate");
+    	
+    	starter.sendEmptyMessageDelayed(0, PREPTIME);
     }
     
     /**
@@ -101,8 +138,9 @@ public class RobatteryService extends Service {
 		super.onStart(intent, startId);
     	Log.d(LOGCAT,"onStart");
 		
-    	this.idler.sendEmptyMessageDelayed(0, RobatteryService.IDLETIME);
-		this.register();
+    	started = true;
+    	notifier.sendEmptyMessageDelayed(0, PREPTIME);
+		register();
 	}
 	
 	/**
@@ -113,16 +151,17 @@ public class RobatteryService extends Service {
 		super.onDestroy();
     	Log.d(LOGCAT,"onDestroy");
 		
-		this.unregister();
-    	this.idler.removeMessages(0);
+		unregister();
+    	notifier.removeMessages(0);
+    	started = false;
 	}
 	
 	public RobatteryStatus getStatus() {
-		return status;
+		return battery;
 	}
 	
 	public int getLevel() {
-		return status.level;
+		return battery.level;
 	}
 		
 	private void register() {
@@ -142,22 +181,22 @@ public class RobatteryService extends Service {
 	private void sendNotification() {
 		Context context = getApplicationContext();
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, Robattery.class), 0);
-		String title = "Battery Status: " + String.valueOf(status.level) + "%";
+		String title = "Battery Status: " + String.valueOf(battery.level) + "%";
 		
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.robot, title, System.currentTimeMillis());
 		notification.setLatestEventInfo(context, title, "Robattery", pendingIntent);
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 		
-		notification.ledARGB = 0xff000000;
-		notification.ledOnMS = 300;
-		notification.ledOffMS = 200;
+		notification.ledARGB = 0xffff0000;
+		notification.ledOnMS = 200;
+		notification.ledOffMS = 800;
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 		
-		long[] vibration = {200, 100};
+		long[] vibration = {200, 500};
 		notification.vibrate = vibration;
 		
-		notification.sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
+		//notification.sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
 
 		nm.cancelAll();
 		nm.notify(1, notification);

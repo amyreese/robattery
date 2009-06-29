@@ -37,7 +37,6 @@ public class Robattery extends Activity {
 		
 		@Override
 		public void handleMessage(Message m) {
-			Log.d(LOGCAT,"handler");
 			count++;
 			
 			if ( bound ) {
@@ -76,13 +75,15 @@ public class Robattery extends Activity {
 	
 	private ServiceConnection robatteryConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder binder) {
-			Log.d(LOGCAT,"onServiceConnected");
+			Log.i(LOGCAT, "Service connected");
+			
 			connected = true;
 			robatteryBinder = binder;
 		}
 		
 		public void onServiceDisconnected(ComponentName name) {
-			Log.d(LOGCAT,"onServiceDisconnected");
+			Log.i(LOGCAT, "Service disconnected");
+			
 			connected = false;
 			robatteryBinder = null;
 		}
@@ -91,7 +92,6 @@ public class Robattery extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOGCAT,"onCreate");
         
     	robatteryServiceIntent = new Intent();
     	robatteryServiceIntent.setComponent(new ComponentName(this, "net.leetcode.robattery.RobatteryService"));
@@ -106,7 +106,6 @@ public class Robattery extends Activity {
     @Override
     public void onResume() {
     	super.onResume();
-        Log.d(LOGCAT,"onResume");
     	
     	tickHandler.sendEmptyMessageDelayed(0, 1000);
     	
@@ -119,7 +118,6 @@ public class Robattery extends Activity {
     @Override
     public void onPause() {
     	super.onPause();
-        Log.d(LOGCAT,"onPause");
     	
     	if (bound) {
     		this.unbindService(robatteryConnection);

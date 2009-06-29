@@ -14,7 +14,6 @@
 
 package net.leetcode.robattery;
 
-import android.net.Uri;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,7 +27,6 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.MediaStore.Audio;
 import android.util.Log;
 
 public class RobatteryService extends Service {

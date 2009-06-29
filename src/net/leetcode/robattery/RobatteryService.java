@@ -193,7 +193,7 @@ public class RobatteryService extends Service {
 		notification.ledOffMS = 800;
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 		
-		long[] vibration = {200, 500};
+		long[] vibration = {200, 200};
 		notification.vibrate = vibration;
 		
 		//notification.sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");

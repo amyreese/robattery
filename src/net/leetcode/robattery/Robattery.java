@@ -18,6 +18,8 @@ import android.app.Activity;
 import android.content.*;
 import android.os.*;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class Robattery extends Activity {
@@ -125,4 +127,30 @@ public class Robattery extends Activity {
     	
     	tickHandler.removeMessages(0);
     }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.main_settings:
+			Intent intent = new Intent();
+			intent.setComponent(new ComponentName(this, "net.leetcode.robattery.RobatterySettings"));
+			startActivity(intent);
+			break;
+
+		default:
+			break;
+		}
+
+		return true;
+	}
 }
+
+

@@ -23,10 +23,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class RobatteryService extends Service {
@@ -49,6 +51,11 @@ public class RobatteryService extends Service {
 	 * The latest battery status representation.
 	 */
 	private RobatteryStatus battery = null;
+	
+	/**
+	 * The application preferences.
+	 */
+	private SharedPreferences prefs = null;
 	
 	/**
 	 * Receiver for asynchronous battery change messages from the OS.
@@ -126,6 +133,7 @@ public class RobatteryService extends Service {
     	Log.d(LOGCAT,"onCreate");
     	
     	starter.sendEmptyMessageDelayed(0, PREPTIME);
+    	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
     
     /**

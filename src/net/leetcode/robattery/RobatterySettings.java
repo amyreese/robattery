@@ -54,7 +54,7 @@ public class RobatterySettings extends PreferenceActivity {
 		String path = prefs.getString("notification_ringtone", "");
 		Uri uri = Uri.parse(path);
 		Log.d(LOGCAT, "Uri: " + uri.toString());
-		if (path == "") {
+		if (path.equals("")) {
 			findPreference("notification_ringtone").setSummary(R.string.silent);
 		} else if (RingtoneManager.isDefault(uri)) {
 			findPreference("notification_ringtone").setSummary(R.string.default_ringtone);

@@ -23,7 +23,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class Robattery extends Activity {
-	private static final int IDLETIME = 1000 * 60; // one minute
+	private static final int IDLETIME = 1000 * 5; // five seconds
 	private final String LOGCAT = "Robattery";
 	
 	private boolean bound = false;

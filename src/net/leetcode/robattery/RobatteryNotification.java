@@ -98,7 +98,9 @@ public class RobatteryNotification {
 		}
 		
 		// send a new notification if below the threshold and unplugged
-		if (battery.level <= minimum_level && battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING) {
+		if (battery.level <= minimum_level &&
+				(battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING ||
+						battery.status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)) {
 			send(nm);
 		}
 	}

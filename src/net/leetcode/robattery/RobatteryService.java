@@ -37,7 +37,7 @@ public class RobatteryService extends Service {
 	/**
 	 * How long the service should wait between checks and/or notifications.
 	 */
-	private static final int PREPTIME = 1000 * 10; // ten seconds
+	private static final int PREPTIME = 1000 * 5; // ten seconds
 	
 	/**
 	 * How long the service should wait between checks and/or notifications.
@@ -53,11 +53,6 @@ public class RobatteryService extends Service {
 	private RobatteryStatus battery = null;
 	
 	/**
-	 * The application preferences.
-	 */
-	private SharedPreferences prefs = null;
-	
-	/**
 	 * Receiver for asynchronous battery change messages from the OS.
 	 */
 	private IntentFilter batteryIntentFilter = new IntentFilter( Intent.ACTION_BATTERY_CHANGED );
@@ -67,6 +62,7 @@ public class RobatteryService extends Service {
 			Log.d(LOGCAT,"onReceive");
 			
 			battery = new RobatteryStatus(intent);
+			new RobatteryNotification(getBaseContext(), battery);
 		}
 	};
 	
@@ -102,11 +98,7 @@ public class RobatteryService extends Service {
 			} else {
 				this.sendEmptyMessageDelayed(0, IDLETIME);
 			
-				if ( battery.level <= 25 && (
-						battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING ||
-						battery.status == BatteryManager.BATTERY_STATUS_NOT_CHARGING ) ) {
-					sendNotification();
-				}
+				new RobatteryNotification(getBaseContext(), battery);
 			}
 		}
 	};
@@ -133,7 +125,6 @@ public class RobatteryService extends Service {
     	Log.d(LOGCAT,"onCreate");
     	
     	starter.sendEmptyMessageDelayed(0, PREPTIME);
-    	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
     
     /**
@@ -182,29 +173,5 @@ public class RobatteryService extends Service {
 			unregisterReceiver(batteryReceiver);
 			registered = false;
 		}
-	}
-	
-	private void sendNotification() {
-		Context context = getApplicationContext();
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, Robattery.class), 0);
-		String title = "Battery Status: " + String.valueOf(battery.level) + "%";
-		
-		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = new Notification(R.drawable.robot, title, System.currentTimeMillis());
-		notification.setLatestEventInfo(context, title, "Robattery", pendingIntent);
-		notification.flags = Notification.FLAG_AUTO_CANCEL;
-		
-		notification.ledARGB = 0xffff0000;
-		notification.ledOnMS = 200;
-		notification.ledOffMS = 800;
-		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		
-		long[] vibration = {200, 200};
-		notification.vibrate = vibration;
-		
-		//notification.sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
-
-		nm.cancelAll();
-		nm.notify(1, notification);
 	}
 }

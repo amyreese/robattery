@@ -25,11 +25,13 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050000;
+        public static final int default_ringtone=0x7f050008;
         public static final int menu_main_settings=0x7f050002;
         public static final int settings_notifications=0x7f050004;
         public static final int settings_notifications_level=0x7f050005;
         public static final int settings_notifications_ringtone=0x7f050006;
         public static final int settings_notifications_vibrate=0x7f050007;
+        public static final int silent=0x7f050009;
         public static final int title_main=0x7f050001;
         public static final int title_settings=0x7f050003;
     }

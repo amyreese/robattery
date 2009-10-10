@@ -7,7 +7,10 @@
 
 	<string name="title_settings">Robattery Settings</string>
 	<string name="settings_notifications">Notifications</string>
-	<string name="settings_notifications_level">Battery Level</string>
+	<string name="settings_notifications_level">Minimum Battery Level</string>
 	<string name="settings_notifications_ringtone">Ringtone</string>
 	<string name="settings_notifications_vibrate">Vibrate</string>
+
+	<string name="default_ringtone">Default ringtone</string>
+	<string name="silent">Silent</string>
 </resources>

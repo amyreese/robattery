@@ -14,6 +14,8 @@
 
 package net.leetcode.robattery;
 
+import java.util.Calendar;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -53,6 +55,11 @@ public class RobatteryNotification {
 	private static final long[] VIBE_TIMING = {200, 200};
 	
 	/**
+	 * Time in milliseconds since the last notification to the user
+	 */
+	private static long lastNotification = 0;
+	
+	/**
 	 * Application context used for intents and notifications.
 	 */
 	private Context context;
@@ -85,10 +92,8 @@ public class RobatteryNotification {
 	private void trigger() {
 		Log.d(LOGCAT, "triggered");
 		
-		// cancel any existing notifications
 		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.cancelAll();
-
+		
 		// get the preferred battery level threshold
 		int minimum_level;
 		try {
@@ -97,11 +102,32 @@ public class RobatteryNotification {
 			minimum_level = 15;
 		}
 		
-		// send a new notification if below the threshold and unplugged
-		if (battery.level <= minimum_level &&
-				(battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING ||
-						battery.status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)) {
+		// determine if the battery state is considered "low" by the user prefs
+		boolean lowbattery = battery.level <= minimum_level &&
+			(battery.status == BatteryManager.BATTERY_STATUS_DISCHARGING ||
+				battery.status == BatteryManager.BATTERY_STATUS_NOT_CHARGING);
+
+		// get the preferred notification interval
+		long interval;
+		try {
+			interval = Long.parseLong(prefs.getString("notification_interval", "120000"));
+		} catch(NumberFormatException e) {
+			interval = 120000;
+		}
+
+		// check the time since last notification
+		long now = Calendar.getInstance().getTimeInMillis();
+		long period = now - lastNotification;
+		
+		// send a notification if low, and reset timer
+		if (lowbattery && period > interval){
+			lastNotification = now;
+			nm.cancelAll();
 			send(nm);
+			
+		} else if (!lowbattery) {
+			lastNotification = 0;
+			nm.cancelAll();
 		}
 	}
 	

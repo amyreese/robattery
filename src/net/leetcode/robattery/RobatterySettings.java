@@ -48,7 +48,10 @@ public class RobatterySettings extends PreferenceActivity {
 	 */
 	public void updateSummaries(SharedPreferences prefs) {
 		// Battery level pref summary
-		findPreference("notification_level").setSummary(prefs.getString("notification_level", "?") + "%");
+		updateSummary(prefs, "notification_level", R.array.notification_levels, R.array.notification_level_values);
+		
+		// Notification interval pref summary
+		updateSummary(prefs, "notification_interval", R.array.notification_intervals, R.array.notification_interval_values);
 		
 		// Ringtone pref summary
 		String path = prefs.getString("notification_ringtone", "");
@@ -62,6 +65,39 @@ public class RobatterySettings extends PreferenceActivity {
 			Ringtone tone = RingtoneManager.getRingtone(getBaseContext(), uri);
 			findPreference("notification_ringtone").setSummary(tone.getTitle(getBaseContext()));
 		}
+	}
+	
+	/**
+	 * Given a preference name and R.array ids, set the preference summary based
+	 * on the user's selected value.
+	 * @param prefs
+	 * @param pref
+	 * @param rlabels
+	 * @param rvalues
+	 */
+	private void updateSummary(SharedPreferences prefs, String pref, int rlabels, int rvalues) {
+		String[] labels = getResources().getStringArray(rlabels);
+		String[] values = getResources().getStringArray(rvalues);
+		int index = findIndex(labels, values, prefs.getString(pref, ""));
+		if (index >= 0) {
+			findPreference(pref).setSummary(labels[index]);
+		}
+	}
+	
+	/**
+	 * Given string arrays, return the index representing the given value.
+	 * @param labels
+	 * @param values
+	 * @param value
+	 * @return index
+	 */
+	private int findIndex(String[] labels, String[] values, String value) {
+		for (int i = 0; i < labels.length && i < values.length; i++) {
+			if (values[i].equals(value)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	@Override

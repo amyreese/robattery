@@ -31,12 +31,7 @@ public class RobatteryService extends Service {
 	/**
 	 * How long the service should wait between checks and/or notifications.
 	 */
-	private static final int PREPTIME = 1000 * 5; // ten seconds
-	
-	/**
-	 * How long the service should wait between checks and/or notifications.
-	 */
-	private static final int IDLETIME = 1000 * 60 * 5; // five minutes
+	private static final int IDLETIME = 1000 * 30; // thirty seconds
 	
 	private boolean started = false;
 	private boolean registered = false;
@@ -87,7 +82,7 @@ public class RobatteryService extends Service {
 		public void handleMessage(Message m) {
 			// null means the status hasn't yet been propagated from the system event
 			if ( battery == null ) {
-				this.sendEmptyMessageDelayed(0, PREPTIME);
+				this.sendEmptyMessageDelayed(0, IDLETIME);
 				
 			} else {
 				this.sendEmptyMessageDelayed(0, IDLETIME);
@@ -118,7 +113,7 @@ public class RobatteryService extends Service {
     	super.onCreate();
     	Log.d(LOGCAT,"onCreate");
     	
-    	starter.sendEmptyMessageDelayed(0, PREPTIME);
+    	starter.sendEmptyMessageDelayed(0, IDLETIME);
     }
     
     /**
@@ -130,7 +125,7 @@ public class RobatteryService extends Service {
     	Log.d(LOGCAT,"onStart");
 		
     	started = true;
-    	notifier.sendEmptyMessageDelayed(0, PREPTIME);
+    	notifier.sendEmptyMessageDelayed(0, IDLETIME);
 		register();
 	}
 	

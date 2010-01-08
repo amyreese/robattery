@@ -7,6 +7,9 @@
 			android:title="@string/settings_notifications_level" android:enabled="true"
 			android:entries="@array/notification_levels" android:defaultValue="15"
 			android:entryValues="@array/notification_level_values"></ListPreference>
+		<ListPreference android:entryValues="@array/notification_interval_values"
+			android:entries="@array/notification_intervals" android:title="@string/settings_notifications_interval"
+			android:enabled="true" android:defaultValue="120000" android:key="notification_interval"></ListPreference>
 		<RingtonePreference android:key="notification_ringtone"
 			android:showSilent="true" android:ringtoneType="notification"
 			android:showDefault="true" android:title="@string/settings_notifications_ringtone"

@@ -31,7 +31,7 @@ import android.util.Log;
  * Class for initiating and tracking notifications for the Robattery background service
  * @author jreese
  */
-public class RobatteryNotification {
+public class Notify {
 	private static final String LOGCAT = "RobatteryNotification";
 	
 	/**
@@ -72,13 +72,13 @@ public class RobatteryNotification {
 	/**
 	 * The current battery status.
 	 */
-	private RobatteryStatus battery;
+	private Battery battery;
 	
 	/**
 	 * Initiate a notification based on the given battery status.
 	 * @param status
 	 */
-	public RobatteryNotification(Context context, RobatteryStatus battery) {
+	public Notify(Context context, Battery battery) {
 		this.context = context;
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.battery = battery;

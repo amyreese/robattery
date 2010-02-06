@@ -14,19 +14,26 @@
 
 package net.leetcode.robattery;
 
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
+import android.os.Binder;
+import android.os.Parcel;
+import android.util.Log;
 
-public class RobatteryBootReceiver extends BroadcastReceiver {
-
+public class BatteryServiceBinder extends Binder {
+	private final String LOGCAT = "RobatteryBinder";
+	private BatteryService service = null;
+	
+	public BatteryServiceBinder( BatteryService service ) {
+		super();
+		this.service = service;		
+	}
+	
 	@Override
-	public void onReceive(Context context, Intent intent) {
-    	Intent robatteryServiceIntent = new Intent();
-    	robatteryServiceIntent.setComponent(new ComponentName(context, "net.leetcode.robattery.RobatteryService"));
-    	
-		context.startService(robatteryServiceIntent);
+	public boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
+		Log.d(LOGCAT,"onTransact");
+		
+		reply.writeBundle(service.getStatus().bundle());
+		
+		return true;
 	}
 
 }

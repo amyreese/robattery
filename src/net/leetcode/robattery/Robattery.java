@@ -47,11 +47,11 @@ public class Robattery extends Activity {
 						Parcel data = Parcel.obtain();
 						Parcel reply = Parcel.obtain();
 						
-						RobatteryStatus battery = null;
+						Battery battery = null;
 						
 						try {
 							robatteryBinder.transact(0, data, reply, 0);
-							battery = new RobatteryStatus(reply.readBundle());
+							battery = new Battery(reply.readBundle());
 							
 						} catch (RemoteException e) {
 						}
@@ -96,7 +96,7 @@ public class Robattery extends Activity {
         super.onCreate(savedInstanceState);
         
     	robatteryServiceIntent = new Intent();
-    	robatteryServiceIntent.setComponent(new ComponentName(this, "net.leetcode.robattery.RobatteryService"));
+    	robatteryServiceIntent.setComponent(new ComponentName(this, "net.leetcode.robattery.BatteryService"));
     	
         this.startService(robatteryServiceIntent);
         
@@ -141,7 +141,7 @@ public class Robattery extends Activity {
 		switch (item.getItemId()) {
 		case R.id.main_settings:
 			Intent intent = new Intent();
-			intent.setComponent(new ComponentName(this, "net.leetcode.robattery.RobatterySettings"));
+			intent.setComponent(new ComponentName(this, "net.leetcode.robattery.Settings"));
 			startActivity(intent);
 			break;
 

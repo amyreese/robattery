@@ -27,7 +27,7 @@ import android.util.Log;
  * Activity screen for setting Robattery preferences
  * @author jreese
  */
-public class RobatterySettings extends PreferenceActivity {
+public class Settings extends PreferenceActivity {
 	public static final String LOGCAT = "RobatterySettings";
 
 	/**

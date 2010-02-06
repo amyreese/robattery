@@ -22,14 +22,14 @@ import android.os.Bundle;
  * Class for transmitting the current status of the battery.
  * @author jreese
  */
-public class RobatteryStatus {
+public class Battery {
 	
 	/**
 	 * Build a status object from an Intent object passed from the
 	 * ACTION_BATTERY_CHANGED event.
 	 * @param intent Intent from ACTION_BATTERY_CHANGED event
 	 */
-	public RobatteryStatus(Intent intent) {
+	public Battery(Intent intent) {
 		present = intent.getBooleanExtra("present", present);
 		status = intent.getIntExtra("status", status);
 		plugtype = intent.getIntExtra("plugged", plugtype);
@@ -44,7 +44,7 @@ public class RobatteryStatus {
 	 * Build a status object from a Bundle object.
 	 * @param bundle Bundle containing status data
 	 */
-	public RobatteryStatus(Bundle bundle) {
+	public Battery(Bundle bundle) {
 		present = bundle.getBoolean("present", present);
 		status = bundle.getInt("status", status);
 		plugtype = bundle.getInt("plugtype", plugtype);

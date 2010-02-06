@@ -25,7 +25,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
-public class RobatteryService extends Service {
+public class BatteryService extends Service {
 	private static final String LOGCAT = "RobatteryService";
 	
 	/**
@@ -39,7 +39,7 @@ public class RobatteryService extends Service {
 	/**
 	 * The latest battery status representation.
 	 */
-	private RobatteryStatus battery = null;
+	private Battery battery = null;
 	
 	/**
 	 * Receiver for asynchronous battery change messages from the OS.
@@ -50,8 +50,8 @@ public class RobatteryService extends Service {
 		public void onReceive( Context c, Intent intent ) {
 			Log.d(LOGCAT,"onReceive");
 			
-			battery = new RobatteryStatus(intent);
-			new RobatteryNotification(getBaseContext(), battery);
+			battery = new Battery(intent);
+			new Notify(getBaseContext(), battery);
 		}
 	};
 	
@@ -87,7 +87,7 @@ public class RobatteryService extends Service {
 			} else {
 				this.sendEmptyMessageDelayed(0, IDLETIME);
 			
-				new RobatteryNotification(getBaseContext(), battery);
+				new Notify(getBaseContext(), battery);
 			}
 		}
 	};
@@ -101,7 +101,7 @@ public class RobatteryService extends Service {
     	
 		register();
 		
-		return new RobatteryBinder(this);
+		return new BatteryServiceBinder(this);
 	}
 
     
@@ -142,7 +142,7 @@ public class RobatteryService extends Service {
     	started = false;
 	}
 	
-	public RobatteryStatus getStatus() {
+	public Battery getStatus() {
 		return battery;
 	}
 	

@@ -17,21 +17,19 @@
 			</intent-filter>
 		</activity>
 
-		<receiver android:name=".RobatteryBootReceiver"
-			android:enabled="true">
+		<receiver android:enabled="true" android:name=".BootReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"></action>
 				<category android:name="android.intent.category.LAUNCHER"></category>
 			</intent-filter>
 		</receiver>
 
-		<service android:enabled="true" android:name=".RobatteryService"
-			android:exported="false">
+		<service android:enabled="true" android:exported="false" android:name=".BatteryService">
 		</service>
 
-		<activity android:name="RobatterySettings" android:enabled="true"
+		<activity android:enabled="true"
 			android:exported="false" android:launchMode="standard"
-			android:screenOrientation="unspecified" android:label="@string/title_settings"></activity>
+			android:screenOrientation="unspecified" android:label="@string/title_settings" android:name="Settings"></activity>
 
 	</application>
 

@@ -14,6 +14,9 @@
 
 package net.leetcode.robattery;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -52,6 +55,8 @@ public class BatteryService extends Service {
 			
 			battery = new Battery(intent);
 			new Notify(getBaseContext(), battery);
+			
+			WidgetProvider.updateAll(battery);
 		}
 	};
 	
@@ -88,6 +93,8 @@ public class BatteryService extends Service {
 				this.sendEmptyMessageDelayed(0, IDLETIME);
 			
 				new Notify(getBaseContext(), battery);
+				
+				WidgetProvider.updateAll(battery);
 			}
 		}
 	};

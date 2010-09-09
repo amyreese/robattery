@@ -95,8 +95,8 @@ public class Robattery extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-    	robatteryServiceIntent = new Intent();
-    	robatteryServiceIntent.setComponent(new ComponentName(this, "net.leetcode.robattery.BatteryService"));
+    	robatteryServiceIntent = new Intent(getBaseContext(), BatteryService.class);
+    	// robatteryServiceIntent.setComponent(new ComponentName(this, "net.leetcode.robattery.BatteryService"));
     	
         this.startService(robatteryServiceIntent);
         
